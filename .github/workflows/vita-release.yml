@@ -74,8 +74,9 @@ jobs:
       - name: Build pfbneo.vpk
         run: |
           cd cmake-build
-          make pfbneo.deps
-          make pfbneo.vpk
+          echo "=== 正在启用多核并行编译 (线程数: $(nproc)) ==="
+          make -j$(nproc) pfbneo.deps
+          make -j$(nproc) pfbneo.vpk
           mv src/cores/pfbneo/pfbneo.vpk $GITHUB_WORKSPACE/
           echo "=== VPK 内部文件列表结构 ==="
           unzip -l $GITHUB_WORKSPACE/pfbneo.vpk | head -n 30
