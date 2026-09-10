@@ -21,14 +21,21 @@ void PFBNRomList::build(const ss_api::GameList::GameAddedCb &cb) {
                game->path.c_str(), game->romsPath.c_str(),
                gameInfo.system.c_str(), gameInfo.systemId, cfgSys.name.c_str(), cfgSys.id);
 #endif
-        // Check Chinese translation mapping (titles.csv) first
+        // 1. Check Chinese translation mapping by zip rom name first
         std::string zipBaseName = c2d::Utility::removeExt(game->path);
         std::string zhTitle = I18n::getTitle(zipBaseName);
 
+        // 2. Also try checking by full english name (e.g. "Aero Fighters 2")
+        if (zhTitle.empty() && !gameInfo.name.empty()) {
+            zhTitle = I18n::getTitle(gameInfo.name);
+        }
+
         if (!zhTitle.empty()) {
             game->name = zhTitle;
+        } else if (!game->name.empty() && game->name != zipBaseName && game->name != gameInfo.name) {
+            // 3. If gamelist.xml already provided a custom/Chinese name, preserve it!
         } else if (!gameInfo.name.empty()) {
-            // replace gamelist.xml name with fbneo name
+            // 4. Fallback to fbneo english name
             game->name = gameInfo.name;
         }
 

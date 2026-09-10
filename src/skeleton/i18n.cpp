@@ -110,6 +110,12 @@ void I18n::loadLanguageFile(const std::string &path, c2d::Io *io) {
     }
 }
 
+static std::string toLowerStr(const std::string &str) {
+    std::string lower = str;
+    std::transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
+    return lower;
+}
+
 void I18n::loadTitlesFile(const std::string &path, c2d::Io *io) {
     std::string content = readFileContent(path);
     if (content.empty()) return;
@@ -127,6 +133,7 @@ void I18n::loadTitlesFile(const std::string &path, c2d::Io *io) {
             std::string name = trim(s.substr(commaPos + 1));
             if (!zip.empty() && !name.empty()) {
                 m_titles[zip] = name;
+                m_titles[toLowerStr(zip)] = name;
             }
         }
     }
@@ -140,11 +147,68 @@ const std::string &I18n::translate(const std::string &key) {
     return key;
 }
 
-std::string I18n::getGameTitle(const std::string &zipName) {
-    auto it = m_titles.find(zipName);
-    if (it != m_titles.end()) {
-        return it->second;
+std::string I18n::getGameTitle(const std::string &name) {
+    if (name.empty()) return "";
+
+    // 1. 精确匹配
+    auto it = m_titles.find(name);
+    if (it != m_titles.end()) return it->second;
+
+    // 2. 小写精确匹配
+    std::string lower = toLowerStr(name);
+    it = m_titles.find(lower);
+    if (it != m_titles.end()) return it->second;
+
+    // 3. 去掉版本括号匹配 (例如 "Air Buster: Trouble Specialty Raid Unit (World)" -> "Air Buster")
+    size_t paren = name.find('(');
+    if (paren != std::string::npos && paren > 0) {
+        std::string clean = trim(name.substr(0, paren));
+        it = m_titles.find(clean);
+        if (it != m_titles.end()) return it->second;
+        it = m_titles.find(toLowerStr(clean));
+        if (it != m_titles.end()) return it->second;
+
+        // 去掉冒号前缀 (例如 "Air Buster: xxx" -> "Air Buster")
+        size_t colon = clean.find(':');
+        if (colon != std::string::npos && colon > 0) {
+            std::string sub = trim(clean.substr(0, colon));
+            it = m_titles.find(sub);
+            if (it != m_titles.end()) return it->second;
+            it = m_titles.find(toLowerStr(sub));
+            if (it != m_titles.end()) return it->second;
+        }
     }
+
+    // 4. 去掉斜杠别名匹配 (例如 "Aero Fighters 2 / Sonic Wings 2" -> 查 "Aero Fighters 2" 或 "Sonic Wings 2")
+    size_t slash = name.find('/');
+    if (slash != std::string::npos && slash > 0) {
+        std::string left = trim(name.substr(0, slash));
+        std::string right = trim(name.substr(slash + 1));
+        // 去除右侧可能存在的括号
+        size_t rParen = right.find('(');
+        if (rParen != std::string::npos) right = trim(right.substr(0, rParen));
+
+        it = m_titles.find(left);
+        if (it != m_titles.end()) return it->second;
+        it = m_titles.find(toLowerStr(left));
+        if (it != m_titles.end()) return it->second;
+
+        it = m_titles.find(right);
+        if (it != m_titles.end()) return it->second;
+        it = m_titles.find(toLowerStr(right));
+        if (it != m_titles.end()) return it->second;
+    }
+
+    // 5. 去掉冒号副标题匹配 (例如 "Baryon - Future Assault" -> "Baryon")
+    size_t dash = name.find('-');
+    if (dash != std::string::npos && dash > 0) {
+        std::string mainTitle = trim(name.substr(0, dash));
+        it = m_titles.find(mainTitle);
+        if (it != m_titles.end()) return it->second;
+        it = m_titles.find(toLowerStr(mainTitle));
+        if (it != m_titles.end()) return it->second;
+    }
+
     return "";
 }
 
