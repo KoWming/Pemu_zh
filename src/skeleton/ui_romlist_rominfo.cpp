@@ -162,7 +162,7 @@ void UIRomInfo::load(const Game &game) {
         showText(ratingText, I18n::tr("Rating: ") + std::to_string(game.rating));
         showText(cloneofText, I18n::tr("Clone Of: ") + (game.cloneOf.empty() ? I18n::tr("NONE") : game.cloneOf));
         showText(filenameText, I18n::tr("File: ") + game.path);
-        showText(synoText, I18n::wrapCJK(game.synopsis, 70));
+        showText(synoText, I18n::wrapCJK(game.synopsis, 76));
     }
 }
 

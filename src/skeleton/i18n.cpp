@@ -150,9 +150,27 @@ const std::string &I18n::translate(const std::string &key) {
 std::string I18n::wrapCJK(const std::string &text, size_t maxCharsPerLine) {
     if (text.empty()) return "";
 
+    // 1. 快速检查文本中是否包含 CJK 字符 (中日韩汉字及全角标点)
+    bool hasCJK = false;
+    for (size_t k = 0; k < text.size(); k++) {
+        unsigned char uc = static_cast<unsigned char>(text[k]);
+        if (uc >= 0xE0) { // UTF-8 中 3字节及以上通常为东亚字符
+            hasCJK = true;
+            break;
+        }
+    }
+
+    // 2. 如果是纯英文/西文介绍，绝对不人工断词，直接返回原字符串！
+    // 底层 Text 引擎会在 710px 宽度内按空格做原生的满宽单词折行 (Word Wrap)
+    if (!hasCJK) {
+        return text;
+    }
+
+    // 3. 对中文及中英混排文本进行平滑满宽折行 (默认 76 视觉字符宽，恰好对应 38 个全角汉字 / 705 像素)
     std::string result;
     size_t lineVisualWidth = 0;
     size_t i = 0;
+    size_t limit = (maxCharsPerLine > 0) ? maxCharsPerLine : 76;
 
     while (i < text.size()) {
         unsigned char c = static_cast<unsigned char>(text[i]);
@@ -163,6 +181,37 @@ std::string I18n::wrapCJK(const std::string &text, size_t maxCharsPerLine) {
             continue;
         }
 
+        // 如果是连续的英文字符/数字/半角符号，作为完整单词计算，绝不在单词中间斩断
+        if ((c & 0x80) == 0 && c != ' ') {
+            size_t wordStart = i;
+            while (i < text.size()) {
+                unsigned char wc = static_cast<unsigned char>(text[i]);
+                if ((wc & 0x80) != 0 || wc == ' ' || wc == '\n') {
+                    break;
+                }
+                i++;
+            }
+            size_t wordLen = i - wordStart;
+            if (lineVisualWidth + wordLen > limit && lineVisualWidth > 0) {
+                result += '\n';
+                lineVisualWidth = 0;
+            }
+            result.append(text, wordStart, wordLen);
+            lineVisualWidth += wordLen;
+            continue;
+        }
+
+        // 处理空格
+        if (c == ' ') {
+            if (lineVisualWidth > 0 && lineVisualWidth < limit) {
+                result += ' ';
+                lineVisualWidth += 1;
+            }
+            i++;
+            continue;
+        }
+
+        // 处理单字 CJK 字符
         size_t charBytes = 1;
         size_t charVisualWidth = 1;
 
@@ -174,13 +223,13 @@ std::string I18n::wrapCJK(const std::string &text, size_t maxCharsPerLine) {
             charVisualWidth = 1;
         } else if ((c & 0xF0) == 0xE0) {
             charBytes = 3;
-            charVisualWidth = 2; // CJK 汉字通常为3字节UTF-8，占据双倍字符宽度
+            charVisualWidth = 2; // CJK 汉字占据 2 个视宽单位
         } else if ((c & 0xF8) == 0xF0) {
             charBytes = 4;
             charVisualWidth = 2;
         }
 
-        if (lineVisualWidth + charVisualWidth > maxCharsPerLine && lineVisualWidth > 0) {
+        if (lineVisualWidth + charVisualWidth > limit && lineVisualWidth > 0) {
             result += '\n';
             lineVisualWidth = 0;
         }
@@ -468,6 +517,10 @@ void I18n::loadDefaultDictionary() {
         {"YOU NEED TO RESTART THE APPLICATION AFTER CHANGING THIS OPTION", "更改此设置项后，需要重新启动模拟器才能生效"},
         {"TRY TO KEEP INTEGER SCALING IF ASPECT RATIO IS NOT TOO DIVERGENT", "如果画面比例差异不大，建议保持整数倍缩放以获得最佳画质"},
         {"KEEP GAME ASPECT RATIO - SOME SHADERS MAY NOT RENDER CORRECTLY", "建议保持原机画面比例 - 某些着色滤镜可能无法正确拉伸"},
+        {"FORCE INTEGER SCALING - ASPECT RATIO MAY BE WRONG BUT SHADERS WILL RENDER CORRECTLY", "强制整数倍缩放 - 画面比例可能有黑边，但滤镜渲染最精准"},
+        {"GAME: %ix%i - RATIO: %.2f | OUTPUT: %ix%i - RATIO: %.2f - SCALING: %.2fx%.2f", "游戏原画: %ix%i - 比例: %.2f | 输出尺寸: %ix%i - 比例: %.2f - 缩放: %.2fx%.2f"},
+        {"NEW INPUT", "设置新按键"},
+        {"PRESS A BUTTON", "请在限定时间内按下想要绑定的按键"},
         {"Please wait...", "请稍候..."}
     };
 }

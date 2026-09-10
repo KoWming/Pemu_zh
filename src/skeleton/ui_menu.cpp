@@ -332,7 +332,7 @@ bool UiMenu::onInput(c2d::Input::Player *players) {
                     float oh = gh * ui->getUiEmu()->getVideo()->getScale().y;
                     float ratio = std::max(ow / oh, oh / ow);
                     ui->getUiStatusBox()->show(
-                            "GAME: %ix%i - RATIO: %.2f | OUTPUT: %ix%i - RATIO: %.2f - SCALING: %.2fx%.2f",
+                            I18n::tr("GAME: %ix%i - RATIO: %.2f | OUTPUT: %ix%i - RATIO: %.2f - SCALING: %.2fx%.2f").c_str(),
                             (int) gw, (int) gh, gr, (int) ow, (int) oh, ratio,
                             ui->getUiEmu()->getVideo()->getScale().x, ui->getUiEmu()->getVideo()->getScale().y);
                 }
@@ -385,16 +385,19 @@ bool UiMenu::onInput(c2d::Input::Player *players) {
         auto option = lines.at(highlightIndex)->p_option;
         if (option && option->getFlags() == PEMUConfig::Flags::INPUT) {
             int new_key = 0;
-            int res = ui->getUiMessageBox()->show("NEW INPUT", "PRESS A BUTTON", "", "", &new_key, 9);
+            int res = ui->getUiMessageBox()->show(
+                    I18n::tr("NEW INPUT"), I18n::tr("PRESS A BUTTON"), "", "", &new_key, 9);
             if (res != MessageBox::TIMEOUT) {
                 needSave = true;
                 option->setInteger(new_key);
                 lines.at(highlightIndex)->refresh();
             }
-        } else if (lines.at(highlightIndex)->p_name->getString() == "STATES") {
+        } else if (lines.at(highlightIndex)->p_name->getString() == "STATES"
+                   || lines.at(highlightIndex)->p_name->getString() == I18n::tr("STATES")) {
             setVisibility(Visibility::Hidden, true);
             ui->getUiStateMenu()->setVisibility(Visibility::Visible, true);
-        } else if (lines.at(highlightIndex)->p_name->getString() == "QUIT") {
+        } else if (lines.at(highlightIndex)->p_name->getString() == "QUIT"
+                   || lines.at(highlightIndex)->p_name->getString() == I18n::tr("QUIT")) {
             if (isEmuRunning) {
                 setVisibility(Visibility::Hidden, true);
                 ui->getUiEmu()->stop();

@@ -173,5 +173,9 @@ YOU NEED TO RESTART EMULATION AFTER CHANGING THIS OPTION=更改此设置项后�
 YOU NEED TO RESTART THE APPLICATION AFTER CHANGING THIS OPTION=更改此设置项后，需要重新启动模拟器才能生效
 TRY TO KEEP INTEGER SCALING IF ASPECT RATIO IS NOT TOO DIVERGENT=如果画面比例差异不大，建议保持整数倍缩放以获得最佳画质
 KEEP GAME ASPECT RATIO - SOME SHADERS MAY NOT RENDER CORRECTLY=建议保持原机画面比例 - 某些着色滤镜可能无法正确拉伸
+FORCE INTEGER SCALING - ASPECT RATIO MAY BE WRONG BUT SHADERS WILL RENDER CORRECTLY=强制整数倍缩放 - 画面比例可能有黑边，但滤镜渲染最精准
+GAME: %ix%i - RATIO: %.2f | OUTPUT: %ix%i - RATIO: %.2f - SCALING: %.2fx%.2f=游戏原画: %ix%i - 比例: %.2f | 输出尺寸: %ix%i - 比例: %.2f - 缩放: %.2fx%.2f
+NEW INPUT=设置新按键
+PRESS A BUTTON=请在限定时间内按下想要绑定的按键
 Please wait...=请稍候...
 
