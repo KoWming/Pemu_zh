@@ -461,6 +461,11 @@ void I18n::loadDefaultDictionary() {
         {"DRIVER INIT FAILED", "驱动核心初始化失败"},
         {"INVALID ROM FILE", "无效的 ROM 游戏文件"},
         {"TIPS: PRESS MENU1 + MENU2 BUTTONS FOR IN GAME MENU...", "提示: 同时按下 菜单1 + 菜单2 按键可呼出游戏内菜单..."},
+        {"TIPS: PRESS START BUTTON 2 SECONDS FOR DIAG MENU...", "提示: 按住 START 键 2 秒进入机台诊断菜单(基板设置)..."},
+        {"TIPS: PRESS COIN BUTTON 2 SECONDS TO RESET CURRENT GAME...", "提示: 按住 SELECT(投币) 键 2 秒可强制复位当前游戏..."},
+        {"THIS GAME DOES NOT SUPPORT THE M68K ASM CORE\nCYCLONE ASM CORE DISABLED", "此游戏不支持 M68K 汇编核心，已自动禁用 Cyclone 汇编核心"},
+        {"YOU NEED TO RESTART EMULATION AFTER CHANGING THIS OPTION", "更改此设置项后，需要重新启动游戏模拟才能生效"},
+        {"YOU NEED TO RESTART THE APPLICATION AFTER CHANGING THIS OPTION", "更改此设置项后，需要重新启动模拟器才能生效"},
         {"TRY TO KEEP INTEGER SCALING IF ASPECT RATIO IS NOT TOO DIVERGENT", "如果画面比例差异不大，建议保持整数倍缩放以获得最佳画质"},
         {"KEEP GAME ASPECT RATIO - SOME SHADERS MAY NOT RENDER CORRECTLY", "建议保持原机画面比例 - 某些着色滤镜可能无法正确拉伸"},
         {"Please wait...", "请稍候..."}
