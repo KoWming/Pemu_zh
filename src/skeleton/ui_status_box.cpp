@@ -26,7 +26,17 @@ UiStatusBox::UiStatusBox(UiMain *m)
 }
 
 void UiStatusBox::show(const std::string &t) {
-    text->setString(t);
+    std::string translated = I18n::tr(t);
+    // 处理动态拼接文本 (例如 "FILTER_MISSING: ON" -> "隐藏缺失的游戏: 开")
+    size_t colon = translated.find(':');
+    if (colon != std::string::npos && translated == t) {
+        std::string key = t.substr(0, colon);
+        size_t firstNonSpace = t.find_first_not_of(' ', colon + 1);
+        std::string val = (firstNonSpace != std::string::npos) ? t.substr(firstNonSpace) : "";
+        translated = I18n::tr(key) + ": " + I18n::tr(val);
+    }
+
+    text->setString(translated);
     text->setPosition(6 * main->getScaling().x, getSize().y / 2);
     setSize(text->getLocalBounds().width + (12 * main->getScaling().x), getSize().y);
 

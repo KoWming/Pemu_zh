@@ -163,14 +163,19 @@ static int ProgressCreate() {
 }
 
 int ProgressUpdateBurner(double dProgress, const TCHAR *pszText, bool bAbs) {
-    pemu_ui->getUiProgressBox()->setTitle(BurnDrvGetTextA(DRV_FULLNAME));
+    const char *fullName = BurnDrvGetTextA(DRV_FULLNAME);
+    std::string zhTitle = I18n::getTitle(fullName ? fullName : "");
+    if (zhTitle.empty() && BurnDrvGetTextA(DRV_NAME)) {
+        zhTitle = I18n::getTitle(BurnDrvGetTextA(DRV_NAME));
+    }
+    pemu_ui->getUiProgressBox()->setTitle(zhTitle.empty() ? (fullName ? fullName : "") : zhTitle);
 
     if (pszText) {
         nProgressPosBurn += dProgress;
-        pemu_ui->getUiProgressBox()->setMessage(pszText);
+        pemu_ui->getUiProgressBox()->setMessage(I18n::formatLoadingMsg(pszText));
         pemu_ui->getUiProgressBox()->setProgress((float) nProgressPosBurn);
     } else {
-        pemu_ui->getUiProgressBox()->setMessage("Please wait...");
+        pemu_ui->getUiProgressBox()->setMessage(I18n::tr("Please wait..."));
     }
 
     pemu_ui->flip();

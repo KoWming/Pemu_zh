@@ -156,3 +156,17 @@ Players: =玩家人数:
 Rating: =评分: 
 Clone Of: =克隆版本: 
 File: =文件路径: 
+
+# 弹窗与系统提示
+ERROR=错误提示
+OK=确定
+CANCEL=取消
+WARNING=警告
+THIS GAME IS NOT SUPPORTED BY FBNEO...=FBNEO 不支持此游戏或驱动缺失...
+DRIVER INIT FAILED=驱动核心初始化失败
+INVALID ROM FILE=无效的 ROM 游戏文件
+TIPS: PRESS MENU1 + MENU2 BUTTONS FOR IN GAME MENU...=提示: 同时按下 菜单1 + 菜单2 按键可呼出游戏内菜单...
+TRY TO KEEP INTEGER SCALING IF ASPECT RATIO IS NOT TOO DIVERGENT=如果画面比例差异不大，建议保持整数倍缩放以获得最佳画质
+KEEP GAME ASPECT RATIO - SOME SHADERS MAY NOT RENDER CORRECTLY=建议保持原机画面比例 - 某些着色滤镜可能无法正确拉伸
+Please wait...=请稍候...
+

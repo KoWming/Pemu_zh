@@ -147,6 +147,88 @@ const std::string &I18n::translate(const std::string &key) {
     return key;
 }
 
+std::string I18n::wrapCJK(const std::string &text, size_t maxCharsPerLine) {
+    if (text.empty()) return "";
+
+    std::string result;
+    size_t lineVisualWidth = 0;
+    size_t i = 0;
+
+    while (i < text.size()) {
+        unsigned char c = static_cast<unsigned char>(text[i]);
+        if (c == '\n') {
+            result += '\n';
+            lineVisualWidth = 0;
+            i++;
+            continue;
+        }
+
+        size_t charBytes = 1;
+        size_t charVisualWidth = 1;
+
+        if ((c & 0x80) == 0) {
+            charBytes = 1;
+            charVisualWidth = 1;
+        } else if ((c & 0xE0) == 0xC0) {
+            charBytes = 2;
+            charVisualWidth = 1;
+        } else if ((c & 0xF0) == 0xE0) {
+            charBytes = 3;
+            charVisualWidth = 2; // CJK 汉字通常为3字节UTF-8，占据双倍字符宽度
+        } else if ((c & 0xF8) == 0xF0) {
+            charBytes = 4;
+            charVisualWidth = 2;
+        }
+
+        if (lineVisualWidth + charVisualWidth > maxCharsPerLine && lineVisualWidth > 0) {
+            result += '\n';
+            lineVisualWidth = 0;
+        }
+
+        for (size_t b = 0; b < charBytes && (i + b) < text.size(); b++) {
+            result += text[i + b];
+        }
+
+        lineVisualWidth += charVisualWidth;
+        i += charBytes;
+    }
+
+    return result;
+}
+
+std::string I18n::formatLoadingMsg(const std::string &rawMsg) {
+    if (rawMsg.empty()) return "正在加载中...";
+
+    // 解析 "Loading graphics (file.bin)...", "Loading program (xxx)..."
+    std::string result = rawMsg;
+    if (result.rfind("Loading", 0) == 0) {
+        std::string rest = trim(result.substr(7)); // 去除 "Loading"
+        std::string type;
+        std::string filePart;
+
+        if (rest.rfind("graphics", 0) == 0) {
+            type = "图像数据";
+            filePart = trim(rest.substr(8));
+        } else if (rest.rfind("program", 0) == 0) {
+            type = "程序代码";
+            filePart = trim(rest.substr(7));
+        } else if (rest.rfind("sound", 0) == 0) {
+            type = "声音数据";
+            filePart = trim(rest.substr(5));
+        } else if (rest.rfind("BIOS", 0) == 0) {
+            type = "BIOS固件";
+            filePart = trim(rest.substr(4));
+        } else {
+            type = "资源";
+            filePart = rest;
+        }
+
+        return "正在加载 " + type + " " + filePart;
+    }
+
+    return tr(rawMsg);
+}
+
 std::string I18n::getGameTitle(const std::string &name) {
     if (name.empty()) return "";
 
@@ -368,7 +450,20 @@ void I18n::loadDefaultDictionary() {
         {"Players: ", "玩家人数: "},
         {"Rating: ", "评分: "},
         {"Clone Of: ", "克隆自: "},
-        {"File: ", "文件路径: "}
+        {"File: ", "文件路径: "},
+
+        // Popup Dialogs & System Notices
+        {"ERROR", "错误提示"},
+        {"OK", "确定"},
+        {"CANCEL", "取消"},
+        {"WARNING", "警告"},
+        {"THIS GAME IS NOT SUPPORTED BY FBNEO...", "FBNEO 不支持此游戏或驱动缺失..."},
+        {"DRIVER INIT FAILED", "驱动核心初始化失败"},
+        {"INVALID ROM FILE", "无效的 ROM 游戏文件"},
+        {"TIPS: PRESS MENU1 + MENU2 BUTTONS FOR IN GAME MENU...", "提示: 同时按下 菜单1 + 菜单2 按键可呼出游戏内菜单..."},
+        {"TRY TO KEEP INTEGER SCALING IF ASPECT RATIO IS NOT TOO DIVERGENT", "如果画面比例差异不大，建议保持整数倍缩放以获得最佳画质"},
+        {"KEEP GAME ASPECT RATIO - SOME SHADERS MAY NOT RENDER CORRECTLY", "建议保持原机画面比例 - 某些着色滤镜可能无法正确拉伸"},
+        {"Please wait...", "请稍候..."}
     };
 }
 

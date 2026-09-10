@@ -23,8 +23,14 @@ public:
     // Translate UI text, returns original text if not found
     const std::string &translate(const std::string &key);
 
+    // Auto-wrap CJK text to fit a specific display character width per line
+    static std::string wrapCJK(const std::string &text, size_t maxCharsPerLine = 38);
+
     // Get game Chinese name by zip rom name (e.g., "kof97" -> "拳皇 97")
     std::string getGameTitle(const std::string &zipName);
+
+    // Format dynamic ROM loading progress message
+    static std::string formatLoadingMsg(const std::string &rawMsg);
 
     // Convenience static shortcuts
     static const std::string &tr(const std::string &key) {
