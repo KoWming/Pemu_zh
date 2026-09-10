@@ -18,7 +18,7 @@ public:
         outlineColorSelected = ui->getSkin()->getRectangleShape({"STATES_MENU"}).outlineColor;
 
         // text if no save/screenshot
-        middle_text = new C2DText("NO SAVE", 26, ui->getSkin()->getFont());
+        middle_text = new C2DText(I18n::tr("NO SAVE"), 26, ui->getSkin()->getFont());
         ui->getSkin()->loadText(middle_text, {"STATES_MENU", "STATES_ITEM", "STATES_TEXT"});
         middle_text->setOrigin(Origin::Center);
         middle_text->setPosition(UiState::getLocalBounds().left + UiState::getSize().x / 2,
@@ -59,12 +59,12 @@ public:
                 }
             }
             if (!texture || !texture->available) {
-                middle_text->setString("NO PIC");
+                middle_text->setString(I18n::tr("NO PIC"));
                 middle_text->setOrigin(Origin::Center);
                 middle_text->setVisibility(Visibility::Visible);
             }
         } else {
-            middle_text->setString("NO SAVE");
+            middle_text->setString(I18n::tr("NO SAVE"));
             middle_text->setOrigin(Origin::Center);
             middle_text->setVisibility(Visibility::Visible);
         }
@@ -229,7 +229,7 @@ bool UiMenuState::onInput(c2d::Input::Player *players) {
             if (state->exist) {
                 int res = ui->getUiMessageBox()->show(
                         state->bottom_text->getString(),
-                        "PRESS FIRE2 TO CANCEL", "LOAD", "SAVE");
+                        I18n::tr("PRESS FIRE2 TO CANCEL"), I18n::tr("LOAD"), I18n::tr("SAVE"));
                 if (res == MessageBox::LEFT) {
                     state->loadState();
                     setVisibility(Visibility::Hidden);

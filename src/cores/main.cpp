@@ -33,6 +33,9 @@ int main(int argc, char **argv) {
 #endif
     pemu_ui->setIo(io);
 
+    // load i18n translations & game titles
+    I18n::getInstance().init(io);
+
     // load configuration
     constexpr int version = (__PEMU_VERSION_MAJOR__ * 100) + __PEMU_VERSION_MINOR__;
     const auto cfg = new PEMUConfig(pemu_ui, version);

@@ -1,0 +1,86 @@
+# ========================================================
+# pEMU / pFBN 简体中文语言包 (zh_CN.lang)
+# ========================================================
+
+# 底部导航与帮助栏
+NAVIGATION=操作导航
+RUN=启动游戏
+FAVORITE=收藏
+ADD / REMOVE FAVORITE=添加/移除收藏
+SWITCH SYSTEM=切换系统
+MAIN MENU=主菜单
+ROM MENU=游戏菜单
+
+# 选项菜单与状态
+MAIN OPTIONS=全局设置
+STATES=即时存档
+QUIT=退出程序
+OTHER=其他选项
+GO=进入
+NO SAVE=无存档
+NO PIC=无预览图
+SAVE STATES=即时存档管理
+PRESS=操作提示
+UP/DOWN : CHANGE SLOT=上/下 : 切换槽位
+A : LOAD=A : 读取存档
+Y : SAVE=Y : 保存存档
+LOAD=读取
+SAVE=保存
+PRESS FIRE2 TO CANCEL=按取消键返回
+
+# 设置分组
+UI_FILTERING=游戏列表筛选
+UI_OPTIONS=界面外观设置
+EMULATION=模拟器核心设置
+ROMS=ROM 目录设置
+
+# 筛选条件
+FILTER_FAVORITES=仅显示收藏
+FILTER_MISSING=隐藏缺失的游戏
+FILTER_CLONES=隐藏克隆版
+FILTER_SYSTEM=按系统筛选
+FILTER_GENRE=按类型筛选
+FILTER_DATE=按年份筛选
+FILTER_EDITOR=按发行商筛选
+FILTER_DEVELOPER=按开发商筛选
+FILTER_PLAYERS=按人数筛选
+FILTER_RATING=按评分筛选
+
+# 界面设置项
+SHOW_ZIP_NAMES=显示 ZIP 文件名
+FULLSCREEN=全屏显示
+SKIN_ASPECT=皮肤画面比例
+FONT_SCALING=字体缩放比例
+VIDEO_SNAP_DELAY=视频预览延迟(秒)
+SKIN=主题皮肤
+
+# 模拟器核心设置项
+SCALING=画面缩放模式
+FORCE_60HZ=强制 60Hz 刷新率
+AUDIO_FREQUENCY=音频采样率
+AUDIO_INTERPOLATION=音频采样插值
+AUDIO_FM_INTERPOLATION=FM 音频插值
+ROTATION=屏幕画面旋转
+NEOBIOS=NEOGEO BIOS 区域
+FRAMESKIP=跳帧设置
+
+# 选项通用取值
+OFF=关
+ON=开
+ALL=全部
+FIT=等比适应
+FULL=全屏拉伸
+NONE=无
+FLIP=翻转
+CAB MODE=街机机台模式
+
+# ROM 信息面板标签
+System: =系统: 
+Developer: =开发商: 
+Editor: =发行商: 
+Date: =发行年份: 
+Genre: =类型: 
+Players: =玩家人数: 
+Rating: =评分: 
+Clone Of: =克隆版本: 
+File: =文件路径: 

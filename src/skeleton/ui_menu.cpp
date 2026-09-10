@@ -47,7 +47,7 @@ public:
         // reset
         setVisibility(Visibility::Visible);
         p_sprite->setVisibility(Visibility::Hidden);
-        p_name->setString(name);
+        p_name->setString(I18n::tr(name));
         p_value->setVisibility(Visibility::Visible);
         setFillColor(Color::Transparent);
 
@@ -56,7 +56,7 @@ public:
             // custom options
             if (name == "STATES" || name == "QUIT") {
                 p_value->setVisibility(Visibility::Visible);
-                p_value->setString("GO");
+                p_value->setString(I18n::tr("GO"));
                 return;
             }
             p_value->setVisibility(Visibility::Hidden);
@@ -91,7 +91,7 @@ public:
             }
         } else {
             p_value->setVisibility(Visibility::Visible);
-            p_value->setString(option->getString());
+            p_value->setString(I18n::tr(option->getString()));
         }
     }
 
@@ -157,7 +157,7 @@ void UiMenu::load(bool isGame) {
         bool useZipName = ui->getConfig()->getOption(PEMUConfig::OptId::UI_SHOW_ZIP_NAMES)->getInteger();
         title->setString(useZipName ? Utility::removeExt(game.path) : game.name);
     } else {
-        title->setString("MAIN OPTIONS");
+        title->setString(I18n::tr("MAIN OPTIONS"));
     }
 
     // set options items

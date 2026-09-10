@@ -153,15 +153,15 @@ void UIRomInfo::load(const Game &game) {
         printf("UIRomInfo::load(%s)\n", game.name.c_str());
         // load title/preview texture
         loadTexture(game);
-        showText(systemText, "System: " + game.system.name);
-        showText(developerText, "Developer: " + game.developer.name);
-        showText(editorText, "Editor: " + game.editor.name);
-        showText(dateText, "Date: " + game.date);
-        showText(genreText, "Genre: " + game.genre.name);
-        showText(playersText, "Players: " + game.players);
-        showText(ratingText, "Rating: " + std::to_string(game.rating));
-        showText(cloneofText, "Clone Of: " + (game.cloneOf.empty() ? "NONE" : game.cloneOf));
-        showText(filenameText, "File: " + game.path);
+        showText(systemText, I18n::tr("System: ") + game.system.name);
+        showText(developerText, I18n::tr("Developer: ") + game.developer.name);
+        showText(editorText, I18n::tr("Editor: ") + game.editor.name);
+        showText(dateText, I18n::tr("Date: ") + game.date);
+        showText(genreText, I18n::tr("Genre: ") + game.genre.name);
+        showText(playersText, I18n::tr("Players: ") + game.players);
+        showText(ratingText, I18n::tr("Rating: ") + std::to_string(game.rating));
+        showText(cloneofText, I18n::tr("Clone Of: ") + (game.cloneOf.empty() ? I18n::tr("NONE") : game.cloneOf));
+        showText(filenameText, I18n::tr("File: ") + game.path);
         showText(synoText, game.synopsis);
     }
 }

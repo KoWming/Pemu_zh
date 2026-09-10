@@ -2,6 +2,9 @@ name: vita-release
 
 on:
   push:
+    branches:
+      - master
+      - main
     tags:
       - "v*.*"
   workflow_dispatch:
@@ -10,64 +13,78 @@ jobs:
   build-vita-release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           submodules: recursive
-      - name: Install build dependencies
-        run: |
-          sudo apt -yq update
-          sudo apt -yq install build-essential cmake git zip curl
+          fetch-depth: 0
 
-      - name: Install vita toolchain
+      - name: Ensure required submodules exist
+        run: |
+          git submodule update --init --recursive || true
+          if [ ! -f "external/libcross2d/CMakeLists.txt" ]; then
+            echo "Cloning missing libcross2d..."
+            rm -rf external/libcross2d
+            git clone --recursive https://github.com/Cpasjuste/libcross2d.git external/libcross2d
+          fi
+          if [ ! -f "external/sscrap/CMakeLists.txt" ]; then
+            echo "Cloning missing sscrap..."
+            rm -rf external/sscrap
+            git clone --recursive https://github.com/Cpasjuste/sscrap.git external/sscrap
+          fi
+          if [ ! -f "external/cores/FBNeo/src/burn/burn.h" ]; then
+            echo "Cloning missing FBNeo..."
+            mkdir -p external/cores
+            rm -rf external/cores/FBNeo
+            git clone --recursive https://github.com/finalburnneo/FBNeo.git external/cores/FBNeo
+          fi
+
+      - name: Install host build dependencies
+        run: |
+          sudo apt-get update -yq
+          sudo apt-get install -yq build-essential cmake git zip curl perl python3
+
+      - name: Install VitaSDK toolchain & libraries
         run: |
           export VITASDK=/usr/local/vitasdk
+          echo "VITASDK=$VITASDK" >> $GITHUB_ENV
+          echo "$VITASDK/bin" >> $GITHUB_PATH
           export PATH=$VITASDK/bin:$PATH
+
+          # Download and install VitaSDK
           wget -q https://github.com/vitasdk/autobuilds/releases/download/master-linux-v2.540/vitasdk-x86_64-linux-gnu-2026-05-24_12-05-02.tar.bz2
           sudo tar -xjf vitasdk-x86_64-linux-gnu-2026-05-24_12-05-02.tar.bz2 -C /usr/local/
+
+          # Install required ports via vdpm
           vdpm libvita2d freetype bzip2 libpng libconfig zlib sdl2 curl openssl tinyxml2 libarchive minizip zstd xz
 
-      - name: Configure
+      - name: Configure CMake for PS Vita (pfbneo only)
         run: |
-          cd $GITHUB_WORKSPACE
-          export VITASDK=/usr/local/vitasdk
           mkdir cmake-build && cd cmake-build
-          cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release .. \
-            -DPLATFORM_VITA=ON -DOPTION_MPV_PLAYER=OFF
+          cmake -G "Unix Makefiles" \
+            -DCMAKE_TOOLCHAIN_FILE=$VITASDK/share/vita.toolchain.cmake \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DPLATFORM_VITA=ON \
+            -DOPTION_EMU=pfbneo \
+            -DOPTION_MPV_PLAYER=OFF \
+            ..
 
-      - name: Build pfbneo
+      - name: Build pfbneo.vpk
         run: |
-          cd $GITHUB_WORKSPACE/cmake-build
+          cd cmake-build
           make pfbneo.deps
           make pfbneo.vpk
-          mv src/cores/pfbneo/pfbneo.vpk $GITHUB_WORKSPACE
+          mv src/cores/pfbneo/pfbneo.vpk $GITHUB_WORKSPACE/
 
-      - name: Build pgen
-        run: |
-          cd $GITHUB_WORKSPACE/cmake-build
-          make pgen.vpk
-          mv src/cores/pgen/pgen.vpk $GITHUB_WORKSPACE
+      - name: Upload Vita VPK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pfbneo-vita-chinese
+          path: pfbneo.vpk
 
-      - name: Build pnes
-        run: |
-          cd $GITHUB_WORKSPACE/cmake-build
-          make pnes.vpk
-          mv src/cores/pnes/pnes.vpk $GITHUB_WORKSPACE
-
-      - name: Build psnes
-        run: |
-          cd $GITHUB_WORKSPACE/cmake-build
-          make psnes.vpk
-          mv src/cores/psnes/psnes.vpk $GITHUB_WORKSPACE
-
-      - name: Build pgba
-        run: |
-          cd $GITHUB_WORKSPACE/cmake-build
-          make pgba.vpk
-          mv src/cores/pgba/pgba.vpk $GITHUB_WORKSPACE
-
-      - name: Release
+      - name: Release to GitHub Releases
         uses: softprops/action-gh-release@v1
         if: ${{ startsWith(github.ref, 'refs/tags/') && !env.ACT }}
         with:
-          files: '*.vpk'
+          files: pfbneo.vpk
           token: ${{ secrets.GITHUB_TOKEN }}

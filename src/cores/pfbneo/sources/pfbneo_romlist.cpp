@@ -21,8 +21,14 @@ void PFBNRomList::build(const ss_api::GameList::GameAddedCb &cb) {
                game->path.c_str(), game->romsPath.c_str(),
                gameInfo.system.c_str(), gameInfo.systemId, cfgSys.name.c_str(), cfgSys.id);
 #endif
-        // replace gamelist.xml name with fbneo name
-        if (!gameInfo.name.empty()) {
+        // Check Chinese translation mapping (titles.csv) first
+        std::string zipBaseName = c2d::Utility::removeExt(game->path);
+        std::string zhTitle = I18n::getTitle(zipBaseName);
+
+        if (!zhTitle.empty()) {
+            game->name = zhTitle;
+        } else if (!gameInfo.name.empty()) {
+            // replace gamelist.xml name with fbneo name
             game->name = gameInfo.name;
         }
 

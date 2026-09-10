@@ -67,7 +67,7 @@ float UiHelp::addItem(bool left, c2d::Font *font, const std::vector<Skin::Button
         }
     }
 
-    auto text = new Text(name, (unsigned int) (getSize().y * 0.85f), font);
+    auto text = new Text(I18n::tr(name), (unsigned int) (getSize().y * 0.85f), font);
     text->setOutlineThickness(1);
     text->setOrigin(left ? Origin::Left : Origin::Right);
     float x = left ? bounds.left + bounds.width : bounds.left;
