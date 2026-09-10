@@ -65,6 +65,8 @@ jobs:
             -DCMAKE_TOOLCHAIN_FILE=$VITASDK/share/vita.toolchain.cmake \
             -DCMAKE_BUILD_TYPE=Release \
             -DPLATFORM_VITA=ON \
+            -DTARGET_PLATFORM=vita \
+            -DVITASDK=$VITASDK \
             -DOPTION_EMU=pfbneo \
             -DOPTION_MPV_PLAYER=OFF \
             ..
@@ -75,6 +77,8 @@ jobs:
           make pfbneo.deps
           make pfbneo.vpk
           mv src/cores/pfbneo/pfbneo.vpk $GITHUB_WORKSPACE/
+          echo "=== VPK 内部文件列表结构 ==="
+          unzip -l $GITHUB_WORKSPACE/pfbneo.vpk | head -n 30
 
       - name: Upload Vita VPK Artifact
         uses: actions/upload-artifact@v4

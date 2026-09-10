@@ -4,6 +4,17 @@ cmake_minimum_required(VERSION 3.10)
 SET(CMAKE_CXX_USE_RESPONSE_FILE_FOR_OBJECTS 1)
 SET(CMAKE_CXX_RESPONSE_FILE_LINK_FLAG "@")
 
+if (PLATFORM_VITA)
+    set(TARGET_PLATFORM vita CACHE STRING "Target platform" FORCE)
+    if (NOT DEFINED VITASDK)
+        if (DEFINED ENV{VITASDK})
+            set(VITASDK $ENV{VITASDK} CACHE PATH "VitaSDK path" FORCE)
+        else ()
+            set(VITASDK "/usr/local/vitasdk" CACHE PATH "VitaSDK path" FORCE)
+        endif ()
+    endif ()
+endif ()
+
 # add libcross2d library. If you want to port pfba to another platform,
 # you should (may) only need to port libcross2d library.
 add_subdirectory(external/libcross2d)
