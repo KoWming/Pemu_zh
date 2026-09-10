@@ -17,6 +17,29 @@ static std::string trim(const std::string &str) {
     return str.substr(first, (last - first + 1));
 }
 
+static std::string readFileContent(const std::string &path) {
+    FILE *fp = fopen(path.c_str(), "rb");
+    if (!fp) return "";
+
+    fseek(fp, 0, SEEK_END);
+    long size = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+
+    if (size <= 0) {
+        fclose(fp);
+        return "";
+    }
+
+    std::string content(static_cast<size_t>(size), '\0');
+    size_t bytesRead = fread(&content[0], 1, static_cast<size_t>(size), fp);
+    fclose(fp);
+
+    if (bytesRead < static_cast<size_t>(size)) {
+        content.resize(bytesRead);
+    }
+    return content;
+}
+
 I18n &I18n::getInstance() {
     static I18n instance;
     return instance;
@@ -64,7 +87,7 @@ void I18n::init(c2d::Io *io) {
 }
 
 void I18n::loadLanguageFile(const std::string &path, c2d::Io *io) {
-    std::string content = io->read(path);
+    std::string content = readFileContent(path);
     if (content.empty()) return;
 
     std::istringstream stream(content);
@@ -88,7 +111,7 @@ void I18n::loadLanguageFile(const std::string &path, c2d::Io *io) {
 }
 
 void I18n::loadTitlesFile(const std::string &path, c2d::Io *io) {
-    std::string content = io->read(path);
+    std::string content = readFileContent(path);
     if (content.empty()) return;
 
     std::istringstream stream(content);
